@@ -1,0 +1,89 @@
+// 3steps:
+// 1)sort all the edges accroding to the finishing time(dfs)
+// 2)reverse the graph
+// 3)Again do the dfs
+
+#include<bits/stdc++.h>
+using namespace std;
+
+void dfs(int node, stack<int> &st, vector<int> &vis, vector<int> adj[]) {
+    vis[node] = 1; 
+    for(auto it: adj[node]) {
+        if(!vis[it]) {
+            dfs(it, st, vis, adj); 
+        }
+    }
+    st.push(node); 
+}
+void revdfs(int node,vector<int> &vis, vector<int> transpose[]) {
+    cout<<node<<" ";
+    vis[node] = 1; 
+    for(auto it: transpose[node]) {
+        if(!vis[it]) {
+            revdfs(it,vis, transpose); 
+        }
+    }
+}
+
+
+int main(){
+    int v,e;
+    cin>>v>>e;
+    vector<int>adj[v];
+    for(int i=0;i<v;i++)
+    {
+        int u,v;
+        cin>>u>>v;
+        adj[u].push_back(v);
+    }
+    // to print whole adjlist
+    // for(int i=0;i<v;i++)
+    // {
+    //     cout<<i<<" : ";
+    //     for(auto it:adj[i]){
+    //         cout<<it<<" ";
+    //     }
+    //     cout<<endl;
+    // }
+    stack<int> st;
+	vector<int> vis(v, 0); 
+	for(int i = 0;i<v;i++) {
+	    if(!vis[i]) {
+	        dfs(i, st, vis, adj); 
+	    }
+	} 
+
+    vector<int>transpose[v];
+    for(int i=0;i<v;i++){
+        vis[i]=0;
+        for(auto it:adj[i]){
+            transpose[it].push_back(i);
+        }
+    }
+    int cnt=0;
+    while(!st.empty())
+    {
+        int node=st.top();
+        st.pop();
+        if(!vis[node]){
+            cout<<"SCC: ";
+            cnt++;
+            revdfs(node,vis,transpose);
+            cout<<endl;
+        }
+    }
+    cout<<cnt<<" ";
+    
+}
+I/P:
+5 5
+1 0
+0 2
+2 1
+0 3
+3 4
+O/P:
+SCC: 0 1 2 
+SCC: 3 
+SCC: 4 
+3 
