@@ -1,0 +1,67 @@
+//step1:find ultimate parent of u(pu) and v(pv);
+//step2:find rank of ultimate parent(pu)(pv);
+//step3:connect smaller rank to larger rank.
+//here we use path compression.
+
+
+#include<bits/stdc++.h>
+using namespace std;
+class Disjointset{
+    vector<int>rank,parent;
+public:
+    Disjointset(int n)
+    {
+        rank.resize(n+1,0);
+        parent.resize(n+1);
+        for(int i=0;i<=n;i++) parent[i]=i;
+    }
+    
+    int findParent(int node){
+        if(node==parent[node]){
+            return node;
+        }
+        return parent[node]=findParent(parent[node]);
+    }
+    
+    void unionFind(int u,int v)
+    {
+        int ult_u=findParent(u);
+        int ult_v=findParent(v);
+        if(ult_u==ult_v){
+            return;
+        }
+        if(rank[ult_u]<rank[ult_v]){
+            parent[ult_u]=ult_v;
+        }
+        else if(rank[ult_u]>rank[ult_v]){
+            parent[ult_v]=ult_u;
+        }
+        else{
+            parent[ult_u]=ult_v;
+            rank[ult_u]++;
+        }
+    }
+};
+int main()
+{
+    Disjointset ds(7);
+    ds.unionFind(1,2);
+    ds.unionFind(2,3);
+    ds.unionFind(4,5);
+    ds.unionFind(6,7);
+    ds.unionFind(5,6);
+    if(ds.findParent(1)==ds.findParent(7)){
+        cout<<"SAME"<<endl;
+    }
+    else{
+        cout<<"NOT SAME"<<endl;
+    }
+    ds.unionFind(3,7);
+    if(ds.findParent(1)==ds.findParent(7)){
+        cout<<"SAME"<<endl;
+    }
+    else{
+        cout<<"NOT SAME"<<endl;
+    }
+    
+}
